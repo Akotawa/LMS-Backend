@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,11 +28,11 @@ import com.laundrymanagementsystem.app.service.IService;
 @RequestMapping(Constants.API_BASE_URL)
 public class ServiceController {
 
-	//addService
-	
+	// addService
+
 	@Autowired
 	private IService iService;
-	
+
 	@PostMapping(value = "/Service/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto addService(@Valid @RequestBody ServiceRequestDto serviceRequestDto,
 			final HttpServletRequest request) {
@@ -39,37 +40,44 @@ public class ServiceController {
 		iService.addService(serviceRequestDto, apiResponseDtoBuilder, request);
 		return apiResponseDtoBuilder.build();
 	}
-	
-	
-	
-	//getServiceByServiceId
-	@GetMapping(value = "/Service/{id}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	// getServiceByServiceId
+	@GetMapping(value = "/service/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto getServiceByServiceId(@PathVariable(required = true) long id) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iService.getServiceByServiceId(id, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
 
-	//getServicesByLaundryId
-	@GetMapping(value = "/Service/laundryId", produces = MediaType.APPLICATION_JSON_VALUE)
+	// getServicesByLaundryId
+	@GetMapping(value = "/service/getByLaundryId", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto getServiceByLaundryId(@RequestParam(required = true) long laundryId) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		iService.getServiceByLaundryId(laundryId, apiResponseDtoBuilder);
+		iService.getAllServiceByLaundryId(laundryId, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	//updateService
-	@PostMapping(value = "/Service/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	// updateService
+	@PutMapping(value = "/service/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto updateService(@Valid @RequestBody Services services) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iService.updateService(services, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	//deleteServiceByServiceId
-	@DeleteMapping(value = "/Service/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+
+	// deleteServiceByServiceId
+	@DeleteMapping(value = "/service/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto deleteServiceById(@PathVariable(required = true) long id) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iService.deleteServiceById(id, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	
+
+	@GetMapping(value = "/service/get", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ApiResponseDto getAllService() {
+		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		iService.getAllService(apiResponseDtoBuilder);
+		return apiResponseDtoBuilder.build();
+	}
+
 }

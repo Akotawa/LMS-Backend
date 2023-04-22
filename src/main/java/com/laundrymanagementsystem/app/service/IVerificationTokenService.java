@@ -13,10 +13,15 @@ public interface IVerificationTokenService {
 
 	void resendRegistrationToken(Long id, ApiResponseDtoBuilder apiResponseDtoBuilder);
 
-	void sendVerificationToken(User user);
-
-	void sendVerificationToken(Order order);
+	void sendVerificationToken(User user, String password);
 
 	void sendBookingToken(Order order);
+
+	void sendWelcomeToken(String password, String email);
+
+	void sendPassword(String email, String password);
+
+	void sendBill(Order order);
+
 
 }

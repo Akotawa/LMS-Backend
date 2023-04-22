@@ -77,28 +77,6 @@ public class AuthenticationController {
 		return apiResponseDtoBuilder.build();
 	}
 
-	@PostMapping("/admin/login")
-	public ApiResponseDto adminlogin(@RequestBody LoginUser loginUser) throws AuthenticationException {
-		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		User checkUser = userService.findByMobileNumberOrEmail(loginUser.getUsername(), loginUser.getUsername());
-		if (checkUser == null) {
-			apiResponseDtoBuilder.withStatus(HttpStatus.UNAUTHORIZED).withMessage(Constants.INVALID_USERNAME);
-			return apiResponseDtoBuilder.build();
-		}
-		if (checkUser.getRole() != 0 && checkUser.getRole() != 1) {
-			apiResponseDtoBuilder.withStatus(HttpStatus.UNAUTHORIZED).withMessage(Constants.UNAUTHORIZED);
-			return apiResponseDtoBuilder.build();
-		}
-		authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
-		final UserDetails user = userDetailsService.loadUserByUsername(loginUser.getUsername());
-		final String token = jwtTokenUtil.generateToken(user);
-		Map<String, Object> response = setTokenDetails(user, token, checkUser);
-		apiResponseDtoBuilder.withStatus(HttpStatus.OK).withMessage(AuthorizationConstants.LOGIN_SUCESSFULL)
-				.withData(response);
-		return apiResponseDtoBuilder.build();
-	}
-
 	private Map<String, Object> setTokenDetails(final UserDetails user, final String token, final User userDetails) {
 		Map<String, Object> response = new HashMap<>();
 		response.put(USER, user);

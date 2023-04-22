@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 import com.laundrymanagementsystem.app.dto.AdminRequestDto;
 import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.dto.EmployeeRequestDto;
-import com.laundrymanagementsystem.app.dto.UserRequestDto;
 import com.laundrymanagementsystem.app.model.Admin;
 import com.laundrymanagementsystem.app.model.Customer;
 import com.laundrymanagementsystem.app.model.Employee;
 import com.laundrymanagementsystem.app.model.SuperAdmin;
 import com.laundrymanagementsystem.app.model.User;
+import com.laundrymanagementsystem.app.requestDto.CustomerRequestDto;
 
 @Service
 public interface IUserService {
 
-	void addCustomer(UserRequestDto userRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
+	void addCustomer(@Valid CustomerRequestDto customerRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
 			HttpServletRequest request);
 
 	Employee findEmployeeById(Long driverId);
@@ -30,9 +30,6 @@ public interface IUserService {
 	void save(User checkUser);
 
 	User findById(Long id);
-
-	void addAdmin(@Valid AdminRequestDto adminRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
-			HttpServletRequest request);
 
 	void addSuperAdmin(@Valid AdminRequestDto adminRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
 			HttpServletRequest request);
@@ -51,7 +48,7 @@ public interface IUserService {
 
 	User findByMobileNumberOrEmailAndPassword(String username, String username2, String password);
 
-	void addEmployee( @Valid EmployeeRequestDto employeeRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
+	void addEmployee(@Valid EmployeeRequestDto employeeRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
 			HttpServletRequest request);
 
 	Admin findAdminById(Long id);
@@ -60,6 +57,20 @@ public interface IUserService {
 
 	void getAllEmployee(ApiResponseDtoBuilder apiResponseDtoBuilder);
 
-	void updatePassword(long id, ApiResponseDtoBuilder apiResponseDtoBuilder, String password);
+	void updatePassword(ApiResponseDtoBuilder apiResponseDtoBuilder, String password);
+
+	void getAllOrder(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
+
+	void addFriend(ApiResponseDtoBuilder apiResponseDtoBuilder, String email, long id);
+
+	void getEmployeeById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
+
+	void updateCustomer(@Valid CustomerRequestDto customer, Long id, ApiResponseDtoBuilder apiResponseDtoBuilder);
+
+	void deleteCustomerById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
+
+	void forgotPassword(ApiResponseDtoBuilder apiResponseDtoBuilder, String email);
+
+	void getCustomerById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
 
 }

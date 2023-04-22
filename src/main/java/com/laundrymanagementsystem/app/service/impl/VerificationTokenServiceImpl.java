@@ -84,24 +84,25 @@ public class VerificationTokenServiceImpl implements IVerificationTokenService {
 			apiResponseDtoBuilder.withMessage(Constants.USER_NOT_FOUND).withStatus(HttpStatus.NOT_FOUND);
 			return;
 		}
-		sendVerificationToken(user);
+		sendVerificationToken(user, null);
 		apiResponseDtoBuilder.withMessage("Confirmation email has been sent").withStatus(HttpStatus.OK);
 	}
 
 	@Override
-	public void sendVerificationToken(User user) {
+	public void sendVerificationToken(User user, String password) {
 		new Thread(() -> {
 			String subject = "laundry managementsystem Account verification";
-			String body = createEmailBody(user.getFullName(), registrationConfirmUrl(user.getId()));
+			String body = createEmailBody(user.getFullName(), registrationConfirmUrl(user.getId()), password);
 			emailService.sendEmail(user.getEmail(), subject, body, "", null, null);
 		}).start();
 	}
 
-	public String createEmailBody(String name, String url) {
+	public String createEmailBody(String name, String url, String password) {
 		final String body = "<html><body><h3>Hello " + name.toUpperCase() + "</h3>"
-				+ "<p>You registered an account on <b>" + name
+				+ "<br>You registered an account on <br>" + name + "<br>" + password
 				+ "</b>, before being able to use your account you need to verify that this is your email verification by clicking here</p>"
-				+ "<a href=\"" + url + "\">Clicking Here </a>" + "<br><br><p>Kind Regards,<br>Team ISUT</body></html>";
+				+ "<a href=\"" + url + "\">Clicking Here </a>"
+				+ "<br><br><p>Kind Regards,<br>Team Laundry Management System<br>Thank You !</body></html>";
 		return body;
 	}
 
@@ -124,26 +125,71 @@ public class VerificationTokenServiceImpl implements IVerificationTokenService {
 		return vToken;
 	}
 
-	@Override
-	public void sendVerificationToken(Order order) {
-
-		new Thread(() -> {
-			String subject = "Order booking  Account verification";
-			String body = createEmailBody(order.getCustomerName(), registrationConfirmUrl(order.getId()));
-			emailService.sendEmail(order.getEmail(), subject, body, "", null, null);
-		}).start();
-	
-		
-	}
 
 	@Override
 	public void sendBookingToken(Order order) {
 		new Thread(() -> {
 			String subject = "Order booking  Account verification";
-			String body = createEmailBody(order.getCustomerName(), registrationConfirmUrl(order.getId()));
-			emailService.sendEmail(order.getEmail(), subject, body, "", null, null);
+			String body = createBookingEmailBody(order.getCustomerName(), registrationConfirmUrl(order.getId()));
+			emailService.sendEmail(order.getEmail(), subject, body, null, null, null);
 		}).start();
-	
-		
+
+	}
+
+	private String createBookingEmailBody(String customerName, String registrationConfirmUrl) {
+		final String body = "<html><body><h3>Hello " + customerName.toUpperCase() + "</h3>"
+				+ "<br>Welcome to Luandry Management System Your Order booking <br>" 
+				+ "<br>Team Laundry Management System<br>Thank You !2</body></html>";
+		return body;
+	}
+
+	@Override
+	public void sendWelcomeToken(String password, String email) {
+		new Thread(() -> {
+			String subject = "Welcome Token";
+			String body = createWelcomeEmailBody(email, password);
+			emailService.sendEmail(email, subject, body, null, null, null);
+		}).start();
+	}
+
+	private String createWelcomeEmailBody(String email, String password) {
+
+		final String body = "<html><body><h3>Hello " + email.toUpperCase() + "</h3>"
+				+ "<br>Welcome to Luandry Management System You registered an account on <br>" + email +"<br>Password<br>"+ password
+				+ "<br>Team Laundry Management System<br>Thank You !2</body></html>";
+		return body;
+
+	}
+
+	@Override
+	public void sendPassword(String email, String password) {
+		new Thread(() -> {
+			String subject = "Password Token";
+			String body = createNewPasswordEmailBody(email, password);
+			emailService.sendEmail(email, subject, body, null, null, null);
+		}).start();
+	}
+
+	private String createNewPasswordEmailBody(String email, String password) {
+		final String body = "<html><body><h3>Hello " + email.toUpperCase() + "</h3>" + "<br>Your New Password is<br>"
+				+ password + "<br>Team Laundry Management System<br>Thank You !</body></html>";
+		return body;
+	}
+
+	@Override
+	public void sendBill(Order order) {
+		new Thread(() -> {
+			String subject = "Bill Token";
+			String body = createBillEmailBody(order);
+			emailService.sendEmail(order.getEmail(), subject, body, null, null, null);
+		}).start();
+	}
+
+	private String createBillEmailBody(Order order) {
+		final String body = "<html><body><h3>Hello " + order.getEmail().toUpperCase() + "</h3>"
+				+ "<br>Your Order Id <br>" + order.getId() + "<br>Service Type <br>" + order.getServiceId()
+				+ "<br>Invoice Amount  <br>" + order.getInvoicedAmount()
+				+ "<br>Team Laundry Management System<br>Thank You !</body></html>";
+		return body;
 	}
 }
