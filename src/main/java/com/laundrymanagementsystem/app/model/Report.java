@@ -21,14 +21,16 @@ import com.laundrymanagementsystem.app.config.CustomJsonDateSerializer;
 import com.laundrymanagementsystem.app.constants.Constants;
 
 @Entity
-@Table(name = Constants.PROMO_CODE_TABLE_NAME)
+@Table(name = Constants.REPORT_TABLE_NAME)
 @JsonIgnoreProperties
-public class PromoCode {
+public class Report {
 
-	public static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	private String email;
+	private String message;
+	private String subject;
 
 	@Column(nullable = true)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -44,27 +46,28 @@ public class PromoCode {
 	@JsonDeserialize(using = CustomDateAndTimeDeserialize.class)
 	private Date updatedAt;
 
-	private String code;
-	private String description;
-	private Date startDate;
-	private Date endDate;
-
-	private String discount;
-
-	public String getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(String discount) {
-		this.discount = discount;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public Date getCreatedAt() {
@@ -83,42 +86,12 @@ public class PromoCode {
 		this.updatedAt = updatedAt;
 	}
 
-	public String getCode() {
-		return code;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

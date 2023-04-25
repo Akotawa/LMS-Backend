@@ -2,9 +2,24 @@ package com.laundrymanagementsystem.app.dto;
 
 public class LaundryRequestDto {
 	private String mobileNumber;
-	private String password;
 	private String email;
-	
+	private String firstName;
+	private String lastName;
+	private String companyName;
+	private String city;
+	private String country;
+
+	private String businessType;
+	private boolean laundryStatus;
+
+	public boolean isLaundryStatus() {
+		return laundryStatus;
+	}
+
+	public void setLaundryStatus(boolean laundryStatus) {
+		this.laundryStatus = laundryStatus;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -20,15 +35,6 @@ public class LaundryRequestDto {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
-	public String getPasswordConfirm() {
-		return passwordConfirm;
-	}
-
-	public void setPasswordConfirm(String passwordConfirm) {
-		this.passwordConfirm = passwordConfirm;
-	}
-
 
 	public String getCompanyName() {
 		return companyName;
@@ -60,33 +66,6 @@ public class LaundryRequestDto {
 
 	public void setBusinessType(String businessType) {
 		this.businessType = businessType;
-	}
-
-	public String getCompanyMail() {
-		return companyMail;
-	}
-
-	public void setCompanyMail(String companyMail) {
-		this.companyMail = companyMail;
-	}
-
-	private String firstName;
-	private String lastName;
-	private String passwordConfirm;
-	private String companyName;
-	private String city;
-	private String country;
-	
-	private String businessType;
-	private String companyMail;
-
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getEmail() {

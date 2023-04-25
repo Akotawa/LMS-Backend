@@ -24,7 +24,7 @@ import com.laundrymanagementsystem.app.constants.Constants;
 @Table(name = Constants.LAUNDRY_TABLE_NAME)
 @JsonIgnoreProperties
 public class Laundry {
-	
+
 	public static final long serialVersionUID = 1L;
 
 	@Id
@@ -49,13 +49,22 @@ public class Laundry {
 	private String email;
 	private String firstName;
 	private String lastName;
-	private String passwordConfirm;
 	private String companyName;
 	private String city;
 	private String country;
-	
+
 	private String businessType;
-	private String companyMail;
+
+	private Boolean laundryStatus;
+	private String mobileNumber;
+
+	public Boolean getLaundryStatus() {
+		return laundryStatus;
+	}
+
+	public void setLaundryStatus(Boolean laundryStatus) {
+		this.laundryStatus = laundryStatus;
+	}
 
 	public String getPassword() {
 		return password;
@@ -87,14 +96,6 @@ public class Laundry {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getPasswordConfirm() {
-		return passwordConfirm;
-	}
-
-	public void setPasswordConfirm(String passwordConfirm) {
-		this.passwordConfirm = passwordConfirm;
 	}
 
 	public String getCompanyName() {
@@ -129,19 +130,6 @@ public class Laundry {
 		this.businessType = businessType;
 	}
 
-	public String getCompanyMail() {
-		return companyMail;
-	}
-
-	public void setCompanyMail(String companyMail) {
-		this.companyMail = companyMail;
-	}
-
-
-
-	private String mobileNumber;
-
-
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
@@ -173,8 +161,6 @@ public class Laundry {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
-
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

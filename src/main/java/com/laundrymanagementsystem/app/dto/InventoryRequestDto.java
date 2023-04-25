@@ -4,7 +4,19 @@ public class InventoryRequestDto {
 
 	private String userName;
 	private String email;
-	private String pasword;
+	private Long laundryId;
+	private String itemName;
+	private long quantity;
+	private String payment;
+	private String itemDescription;
+
+	public Long getLaundryId() {
+		return laundryId;
+	}
+
+	public void setLaundryId(Long laundryId) {
+		this.laundryId = laundryId;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -22,14 +34,6 @@ public class InventoryRequestDto {
 		this.email = email;
 	}
 
-	public String getPasword() {
-		return pasword;
-	}
-
-	public void setPasword(String pasword) {
-		this.pasword = pasword;
-	}
-
 	public String getItemName() {
 		return itemName;
 	}
@@ -38,11 +42,11 @@ public class InventoryRequestDto {
 		this.itemName = itemName;
 	}
 
-	public String getQuantity() {
+	public long getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(String quantity) {
+	public void setQuantity(long quantity) {
 		this.quantity = quantity;
 	}
 
@@ -53,11 +57,6 @@ public class InventoryRequestDto {
 	public void setPayment(String payment) {
 		this.payment = payment;
 	}
-
-	private String itemName;
-	private String quantity;
-	private String payment;
-	private String itemDescription;
 
 	public String getItemDescription() {
 		return itemDescription;

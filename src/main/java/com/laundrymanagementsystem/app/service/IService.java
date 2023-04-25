@@ -17,10 +17,12 @@ public interface IService {
 
 	void getServiceByServiceId(long id, ApiResponseDtoBuilder apiResponseDtoBuilder);
 
-	void getServiceByLaundryId(long laundryId, ApiResponseDtoBuilder apiResponseDtoBuilder);
+	void getAllServiceByLaundryId(long laundryId, ApiResponseDtoBuilder apiResponseDtoBuilder);
 
 	void updateService(@Valid Services services, ApiResponseDtoBuilder apiResponseDtoBuilder);
 
 	void deleteServiceById(long id, ApiResponseDtoBuilder apiResponseDtoBuilder);
+
+	void getAllService(ApiResponseDtoBuilder apiResponseDtoBuilder);
 
 }

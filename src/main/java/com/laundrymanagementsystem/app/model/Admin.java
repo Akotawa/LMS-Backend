@@ -13,19 +13,15 @@ public class Admin extends User {
 
 	private static final long serialVersionUID = 1L;
 	private Long laundryid;
-	
+
 	public Long getLaundryid() {
 		return laundryid;
 	}
+
 	public void setLaundryid(Long laundryid) {
 		this.laundryid = laundryid;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
-	
-
-	
 }

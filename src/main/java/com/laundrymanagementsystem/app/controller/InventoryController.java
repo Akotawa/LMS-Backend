@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,7 +32,7 @@ public class InventoryController {
 	@Autowired
 	private IInventoryService iInventoryService;
 
-	@PostMapping(value = "/Item/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/Inventory/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto addItem(@Valid @RequestBody InventoryRequestDto inventoryRequestDto,
 			final HttpServletRequest request) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
@@ -40,26 +41,33 @@ public class InventoryController {
 	}
 
 	// getAllInventoryItems
-	
-	@GetMapping(value = "/Item", produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@GetMapping(value = "/Inventory/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto getAllItem() {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iInventoryService.getAllItem(apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	
+
+	@GetMapping(value = "/Inventory/get/{id}")
+	public ApiResponseDto getInventoryById(@PathVariable(required = true) long id) {
+		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		iInventoryService.getInventoryById(apiResponseDtoBuilder, id);
+		return apiResponseDtoBuilder.build();
+	}
+
 	// deleteInventoryItem
-	
-	@DeleteMapping(value = "/Item/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@DeleteMapping(value = "/Inventory/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto deleteItemById(@PathVariable(required = true) long id) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iInventoryService.deleteItemById(id, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	
+
 	// updateInventoryItem
-	
-	@PostMapping(value = "/Item/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PutMapping(value = "/Inventory/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto updateItem(@Valid @RequestBody Inventory inventory) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		iInventoryService.updateItem(inventory, apiResponseDtoBuilder);

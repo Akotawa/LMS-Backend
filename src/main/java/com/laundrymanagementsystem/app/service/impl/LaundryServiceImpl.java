@@ -63,24 +63,27 @@ public class LaundryServiceImpl implements lLaundryService {
 			apiResponseDtoBuilder.withMessage(Constants.EMAIL_ALREADY_EXISTS).withStatus(HttpStatus.ALREADY_REPORTED);
 			return;
 		}
-		Laundry user = customMapper.laundryRequestDtoTolandry(laundryRequestDto);
+		Laundry laundry = customMapper.laundryRequestDtoTolandry(laundryRequestDto);
 
-		user.setCreatedAt(new Date());
-		user.setUpdatedAt(new Date());
-		saveLaundry(user);
-		Laundry laundry = laundryRepository.findByMobileNumber(laundryRequestDto.getMobileNumber());
+		laundry.setCreatedAt(new Date());
+		laundry.setLaundryStatus(true);
+		
 		Admin admin = new Admin();
-		admin.setLaundryid(laundry.getId());
-		String newPasswordEncodedString = bCryptPasswordEncoder.encode(laundryRequestDto.getPassword());
+		String password = Utility.generateRandomPassword(8);
+		System.out.println(password);
+		String newPasswordEncodedString = bCryptPasswordEncoder.encode(password);
+		laundry.setPassword(newPasswordEncodedString);
+		saveLaundry(laundry);
 		admin.setPassword(newPasswordEncodedString);
 		admin.setCreatedAt(new Date());
 		admin.setRole(1);
 		admin.setEmail(laundryRequestDto.getEmail());
+		admin.setLaundryid(laundry.getId());
 		saveAdmin(admin);
-		apiResponseDtoBuilder.withMessage(Constants.USER_ADD_SUCCESS).withStatus(HttpStatus.OK).withData(user);
-		verificationTokenService.sendVerificationToken(admin);
+		apiResponseDtoBuilder.withMessage(Constants.USER_ADD_SUCCESS).withStatus(HttpStatus.OK).withData(laundry);
+		verificationTokenService.sendWelcomeToken(password, laundryRequestDto.getEmail());
 
-		apiResponseDtoBuilder.withMessage("Laundry Add Sucessfully").withStatus(HttpStatus.OK).withData(user);
+		apiResponseDtoBuilder.withMessage("Laundry Add Sucessfully").withStatus(HttpStatus.OK).withData(laundry);
 
 	}
 
@@ -106,7 +109,7 @@ public class LaundryServiceImpl implements lLaundryService {
 		}
 		laundry.setUpdatedAt(new Date());
 		laundryRepository.save(laundry);
-		apiResponseDtoBuilder.withMessage("Laundry Details Update Successfully.").withStatus(HttpStatus.OK)
+		apiResponseDtoBuilder.withMessage("Laundry  Update Successfully.").withStatus(HttpStatus.OK)
 				.withData(laundry);
 
 	}
@@ -119,7 +122,7 @@ public class LaundryServiceImpl implements lLaundryService {
 			return;
 		}
 		List<Laundry> cabList = laundryRepository.findAll();
-		apiResponseDtoBuilder.withMessage("success").withStatus(HttpStatus.OK).withData(cabList);
+		apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(cabList);
 
 	}
 
@@ -133,7 +136,7 @@ public class LaundryServiceImpl implements lLaundryService {
 		}
 		if (user.isPresent()) {
 
-			apiResponseDtoBuilder.withMessage("success").withStatus(HttpStatus.OK).withData(user);
+			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(user);
 
 		} else {
 			apiResponseDtoBuilder.withMessage("data not fond.").withStatus(HttpStatus.OK);
@@ -162,11 +165,16 @@ public class LaundryServiceImpl implements lLaundryService {
 
 	@Override
 	public void isActiveLaundry(long id, boolean active, ApiResponseDtoBuilder apiResponseDtoBuilder) {
-		Optional<Laundry> cab = laundryRepository.findById(id);
-		if (cab.isPresent()) {
-			save(cab.get());
-			apiResponseDtoBuilder.withMessage(active ? Constants.LAUNDRY_ACTIVE_SUCCESS : Constants.LAUNDRY_DEACTIVE_SUCCESS)
-					.withStatus(HttpStatus.OK);
+		User currentUser = Utility.getSessionUser(userRepository);
+		if (currentUser == null || currentUser.getRole() != 0) {
+			apiResponseDtoBuilder.withMessage(Constants.UNAUTHORIZED).withStatus(HttpStatus.UNAUTHORIZED);
+			return;
+		}
+		Optional<Laundry> laundry = laundryRepository.findById(id);
+		if (laundry.isPresent()) {
+			laundry.get().setLaundryStatus(active);
+			save(laundry.get());
+			apiResponseDtoBuilder.withMessage("Laundry Status Change successfully..").withStatus(HttpStatus.OK);
 		} else {
 			apiResponseDtoBuilder.withMessage(Constants.LAUNDRY_NOT_FOUND).withStatus(HttpStatus.NOT_FOUND);
 		}
@@ -175,7 +183,6 @@ public class LaundryServiceImpl implements lLaundryService {
 
 	private void save(Laundry laundry) {
 		laundryRepository.save(laundry);
-
 	}
 
 	@Override
@@ -195,7 +202,7 @@ public class LaundryServiceImpl implements lLaundryService {
 	@Override
 	public void orderConfirmation(long id, int status, ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		Optional<Laundry> cab = laundryRepository.findById(id);
-		
+
 		if (cab.isPresent()) {
 			save(cab.get());
 			apiResponseDtoBuilder

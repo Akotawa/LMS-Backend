@@ -16,6 +16,10 @@ public class Customer extends User {
 	private Long rewardPoints;
 	private String homeAddress;
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public Boolean getIsVerified() {
 		return isVerified;
 	}

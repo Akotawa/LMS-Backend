@@ -21,4 +21,6 @@ public interface IInventoryService {
 
 	void updateItem(@Valid Inventory inventory, ApiResponseDtoBuilder apiResponseDtoBuilder);
 
+	void getInventoryById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
+
 }

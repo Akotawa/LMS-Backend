@@ -5,10 +5,21 @@ public class ServiceRequestDto {
 	private String serviceName;
 
 	private String serviceDescription;
-	
+
 	private String quantity;
-	
+
 	private long laundryId;
+
+	private long price;
+	
+
+	public long getPrice() {
+		return price;
+	}
+
+	public void setPrice(long price) {
+		this.price = price;
+	}
 
 	public long getLaundryId() {
 		return laundryId;

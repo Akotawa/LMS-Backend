@@ -1,5 +1,8 @@
 package com.laundrymanagementsystem.app.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +15,11 @@ import org.springframework.stereotype.Service;
 import com.laundrymanagementsystem.app.constants.Constants;
 import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.dto.ServiceRequestDto;
+import com.laundrymanagementsystem.app.dto.ServiceResponseDto;
 import com.laundrymanagementsystem.app.mapper.CustomMapper;
 import com.laundrymanagementsystem.app.model.Services;
 import com.laundrymanagementsystem.app.repository.LaundryRepository;
+import com.laundrymanagementsystem.app.repository.PriceListRepositroy;
 import com.laundrymanagementsystem.app.repository.ServiceRepository;
 import com.laundrymanagementsystem.app.service.IService;
 
@@ -27,11 +32,14 @@ public class ServiceImpl implements IService {
 	CustomMapper customMapper;
 	@Autowired
 	LaundryRepository laundryRepository;
+	@Autowired
+	PriceListRepositroy priceListRepositroy;
 
 	@Override
 	public void addService(@Valid ServiceRequestDto serviceRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
 			HttpServletRequest request) {
 		Services serviceRequestDtoToServices = customMapper.serviceRequestDtoToServices(serviceRequestDto);
+		serviceRequestDtoToServices.setCreatedAt(new Date());
 		serviceRepository.save(serviceRequestDtoToServices);
 		apiResponseDtoBuilder.withMessage("Service Add Sucessfully").withStatus(HttpStatus.OK)
 				.withData(serviceRequestDtoToServices);
@@ -42,7 +50,7 @@ public class ServiceImpl implements IService {
 		Optional<Services> service = serviceRepository.findById(id);
 		if (service.isPresent()) {
 
-			apiResponseDtoBuilder.withMessage("success").withStatus(HttpStatus.OK).withData(service);
+			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(service);
 
 		} else {
 			apiResponseDtoBuilder.withMessage("data not fond.").withStatus(HttpStatus.OK);
@@ -51,31 +59,32 @@ public class ServiceImpl implements IService {
 	}
 
 	@Override
-	public void getServiceByLaundryId(long laundryId, ApiResponseDtoBuilder apiResponseDtoBuilder) {
-		Optional<Services> laundryIdCheck = serviceRepository.findByLaundryId(laundryId);
-		
-		if (laundryIdCheck.isPresent()) {
+	public void getAllServiceByLaundryId(long laundryId, ApiResponseDtoBuilder apiResponseDtoBuilder) {
+		List<Services> listOfServices = serviceRepository.findAllByLaundryId(laundryId);
 
-			apiResponseDtoBuilder.withMessage("success").withStatus(HttpStatus.OK).withData(laundryIdCheck);
+		if (!listOfServices.isEmpty()) {
+
+			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK)
+					.withData(listOfServices);
 
 		} else {
 			apiResponseDtoBuilder.withMessage("data not fond.").withStatus(HttpStatus.OK);
-
 		}
 	}
 
 	@Override
 	public void updateService(@Valid Services services, ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		Optional<Services> servicesChaeck = serviceRepository.findById(services.getId());
-		if(servicesChaeck.isPresent()) {
+		if (servicesChaeck.isPresent()) {
+			services.setUpdatedAt(new Date());
 			serviceRepository.save(services);
 			apiResponseDtoBuilder.withMessage("Service Update Successfully.").withStatus(HttpStatus.OK)
 					.withData(services);
-		}else {
+		} else {
 			apiResponseDtoBuilder.withMessage(Constants.NO_SERVICE_EXISTS).withStatus(HttpStatus.OK);
 			return;
 		}
-		
+
 	}
 
 	@Override
@@ -86,8 +95,30 @@ public class ServiceImpl implements IService {
 
 			apiResponseDtoBuilder.withMessage("Service Deleted Successfully").withStatus(HttpStatus.OK);
 		} else {
-			apiResponseDtoBuilder.withMessage("fail").withStatus(HttpStatus.NOT_FOUND);
+			apiResponseDtoBuilder.withMessage(Constants.NO_SERVICE_EXISTS).withStatus(HttpStatus.NOT_FOUND);
 		}
-		
+
+	}
+
+	@Override
+	public void getAllService(ApiResponseDtoBuilder apiResponseDtoBuilder) {
+		List<ServiceResponseDto> serviceList = new ArrayList<>();
+		List<Services> dataList = serviceRepository.findAll();
+		for (Services services : dataList) {
+			ServiceResponseDto serviceResponseDto = new ServiceResponseDto();
+			serviceResponseDto.setServiceId(services.getId());
+			serviceResponseDto.setServiceName(services.getServiceName());
+			serviceResponseDto.setLaundryId(services.getLaundryId());
+			if (laundryRepository.findById(services.getLaundryId()).isPresent()) {
+				serviceResponseDto
+						.setLaundryName(laundryRepository.findById(services.getLaundryId()).get().getCompanyName());
+			}
+			serviceResponseDto.setPriceId(services.getPrice());
+			if(priceListRepositroy.findById(services.getPrice()).isPresent()) {
+				serviceResponseDto.setPrice(priceListRepositroy.findById(services.getPrice()).get().getPrice());
+			}
+			serviceList.add(serviceResponseDto);
+		}
+		apiResponseDtoBuilder.withMessage("Service List").withStatus(HttpStatus.OK).withData(serviceList);
 	}
 }
