@@ -71,10 +71,8 @@ public class LaundryServiceImplTest {
 		sessionUser.setFullName("test");
 		sessionUser.setId(1l);
 		sessionUser.setRole(0);
-		Laundry laundry = new Laundry();
 		boolean s = true;
 		when(userRepository.existsByEmail(laundryRequestDto.getEmail())).thenReturn(s);
-		when(customMapper.laundryRequestDtoTolandry(laundryRequestDto)).thenReturn(laundry);
 		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
 		laundryServiceImpl.addLaundry(laundryRequestDto, apiResponseDtoBuilder, httpServletRequest);
 		assertTrue(apiResponseDtoBuilder.getMessage().equals("Email Already Exists"));

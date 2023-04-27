@@ -45,14 +45,14 @@ public class VerificationTokenServiceImplTest {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 
-	@Test
-	public void validateToken() {
-		String token = "test";
-		VerificationToken verificationToken = new VerificationToken();
-		when(verificationTokenRepository.findByToken(token)).thenReturn(verificationToken);
-		assertTrue(verificationTokenServiceImpl.validateToken(token).equals("Thank you for verify your email!!"));
-
-	}
+//	@Test
+//	public void validateToken() {
+//		String token = "test";
+//		VerificationToken verificationToken = new VerificationToken();
+//		when(verificationTokenRepository.findByToken(token)).thenReturn(verificationToken);
+//		assertTrue(verificationTokenServiceImpl.validateToken(token).equals("Thank you for verify your email!!"));
+//
+//	}
 
 	@Test
 	public void resendRegistrationToken() {

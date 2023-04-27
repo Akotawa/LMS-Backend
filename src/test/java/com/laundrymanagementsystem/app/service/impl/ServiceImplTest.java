@@ -26,10 +26,12 @@ import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.dto.ServiceRequestDto;
 import com.laundrymanagementsystem.app.mapper.CustomMapper;
 import com.laundrymanagementsystem.app.model.Laundry;
+import com.laundrymanagementsystem.app.model.PriceList;
 import com.laundrymanagementsystem.app.model.Services;
 import com.laundrymanagementsystem.app.model.User;
 import com.laundrymanagementsystem.app.repository.LaundryRepository;
 import com.laundrymanagementsystem.app.repository.OrderRepository;
+import com.laundrymanagementsystem.app.repository.PriceListRepositroy;
 import com.laundrymanagementsystem.app.repository.ServiceRepository;
 import com.laundrymanagementsystem.app.repository.UserRepository;
 
@@ -47,6 +49,8 @@ public class ServiceImplTest {
 	CustomMapper customMapper;
 	@Mock
 	LaundryRepository laundryRepository;
+	@Mock
+	PriceListRepositroy priceListRepositroy;
 
 	@BeforeEach
 	public void init() {
@@ -71,7 +75,7 @@ public class ServiceImplTest {
 		Services services = new Services();
 		when(customMapper.serviceRequestDtoToServices(serviceRequestDto)).thenReturn(services);
 		serviceImpl.addService(serviceRequestDto, apiResponseDtoBuilder, httpServletRequest);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.ITEM_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Service Add Sucessfully"));
 
 	}
 
@@ -79,16 +83,12 @@ public class ServiceImplTest {
 	public void getServiceByServiceId() {
 		long id = 1l;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		ServiceRequestDto serviceRequestDto = new ServiceRequestDto();
-		serviceRequestDto.setLaundryId(1l);
-		serviceRequestDto.setPrice(123);
-		serviceRequestDto.setQuantity("test");
-		serviceRequestDto.setServiceDescription("test");
-		serviceRequestDto.setServiceName("test");
-		Optional<Services> service = null;
-		when(serviceRepository.findById(id)).thenReturn(service);
+		Services services = new Services();
+		services.setId(1l);
+		Optional<Services> servicesIdChaeck = Optional.ofNullable(services);
+		when(serviceRepository.findById(id)).thenReturn(servicesIdChaeck);
 		serviceImpl.getServiceByServiceId(id, apiResponseDtoBuilder);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.ITEM_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 
 	}
 
@@ -102,10 +102,13 @@ public class ServiceImplTest {
 		serviceRequestDto.setQuantity("test");
 		serviceRequestDto.setServiceDescription("test");
 		serviceRequestDto.setServiceName("test");
+		Services services=new Services();
+		services.setId(1l);
 		List<Services> listOfServices = new ArrayList<>();
+		listOfServices.add(services);
 		when(serviceRepository.findAllByLaundryId(laundryId)).thenReturn(listOfServices);
-		serviceImpl.getServiceByServiceId(laundryId, apiResponseDtoBuilder);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.ITEM_ADD_SUCCESS));
+		serviceImpl.getAllServiceByLaundryId(laundryId, apiResponseDtoBuilder);
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 
 	}
 
@@ -119,10 +122,12 @@ public class ServiceImplTest {
 		serviceRequestDto.setQuantity("test");
 		serviceRequestDto.setServiceDescription("test");
 		serviceRequestDto.setServiceName("test");
-		List<Services> listOfServices = new ArrayList<>();
-		when(serviceRepository.findAllByLaundryId(laundryId)).thenReturn(listOfServices);
-		serviceImpl.getServiceByServiceId(laundryId, apiResponseDtoBuilder);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.ITEM_ADD_SUCCESS));
+		Services services=new Services();
+		services.setId(1l);
+		Optional<Services> listOfServices = Optional.ofNullable(services);
+		when(serviceRepository.findById(services.getId())).thenReturn(listOfServices);
+		serviceImpl.updateService(services, apiResponseDtoBuilder);
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Service Update Successfully."));
 
 	}
 
@@ -162,10 +167,16 @@ public class ServiceImplTest {
 		when(serviceRepository.findAll()).thenReturn(dataList);
 		Laundry laundry=new Laundry();
 		laundry.setId(1l);
-		Optional<Laundry> laundrys=Optional.ofNullable(laundry)
-		when(laundryRepository.findById(services.getLaundryId());
+		Optional<Laundry> laundrys=Optional.ofNullable(laundry);
+		when(laundryRepository.findById(services.getLaundryId())).thenReturn(laundrys);
+		PriceList PriceList=new PriceList();
+		PriceList.setId(1l);
+		PriceList.setPrice(123d);
+		Optional<PriceList> s=Optional.ofNullable(PriceList);
+		when(priceListRepositroy.findById(services.getPrice())).thenReturn(s);
+		
 		serviceImpl.getAllService(apiResponseDtoBuilder);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.ITEM_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Service List"));
 
 	}
 }

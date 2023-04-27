@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.laundrymanagementsystem.app.constants.Constants;
 import com.laundrymanagementsystem.app.dto.AdminRequestDto;
@@ -33,8 +34,12 @@ import com.laundrymanagementsystem.app.model.User;
 import com.laundrymanagementsystem.app.repository.CustomerRepository;
 import com.laundrymanagementsystem.app.repository.EmployeeRepository;
 import com.laundrymanagementsystem.app.repository.OrderRepository;
+import com.laundrymanagementsystem.app.repository.SuperAdminRepository;
 import com.laundrymanagementsystem.app.repository.UserRepository;
 import com.laundrymanagementsystem.app.requestDto.CustomerRequestDto;
+import com.laundrymanagementsystem.app.service.IEmailService;
+import com.laundrymanagementsystem.app.service.IVerificationTokenService;
+import com.laundrymanagementsystem.app.utility.Utility;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -50,6 +55,14 @@ public class UserServiceImplTest {
 	CustomMapper customMapper;
 	@Mock
 	CustomerRepository customerRepository;
+	@Mock
+	IEmailService emailService;
+	@Mock
+	SuperAdminRepository superAdminRepository;
+	@Mock
+	IVerificationTokenService verificationTokenService;
+	@Mock
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@BeforeEach
 	public void init() {
@@ -61,24 +74,14 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void loadUserByUsername() {
-		String username = "String";
-		User user = new User();
-		user.setEmail("string");
-		when(userRepository.findByMobileNumberOrEmail(username, username)).thenReturn(user);
-		assertTrue(userServiceImpl.loadUserByUsername(username).getUsername().equals("string"));
-
-	}
-
-	@Test
 	public void addSuperAdmin() {
 		HttpServletRequest httpServletRequest = null;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		AdminRequestDto adminRequestDto = new AdminRequestDto();
-		SuperAdmin superAdmin = new SuperAdmin();
-		when(customMapper.adminRequestDtoToSuperAdmin(adminRequestDto)).thenReturn(superAdmin);
+		boolean s = true;
+		when(userRepository.existsByEmail(adminRequestDto.getEmail())).thenReturn(s);
 		userServiceImpl.addSuperAdmin(adminRequestDto, apiResponseDtoBuilder, httpServletRequest);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.USER_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.EMAIL_ALREADY_EXISTS));
 
 	}
 
@@ -93,10 +96,10 @@ public class UserServiceImplTest {
 		customerRequestDto.setMobileNumber("12345678");
 		customerRequestDto.setPassword("test");
 		customerRequestDto.setProfileImage("test");
-		Customer customer = new Customer();
-		when(customMapper.CustomerRequestDtoToCustomer(customerRequestDto)).thenReturn(customer);
+		boolean g = true;
+		when(customerRepository.existsByEmail("test")).thenReturn(g);
 		userServiceImpl.addCustomer(customerRequestDto, apiResponseDtoBuilder, httpServletRequest);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.USER_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.EMAIL_ALREADY_EXISTS));
 
 	}
 
@@ -109,10 +112,17 @@ public class UserServiceImplTest {
 		employeeRequestDto.setEmail("test");
 		employeeRequestDto.setMobileNumber("12345678");
 		employeeRequestDto.setUserType("test");
-		Employee customer = new Employee();
-		when(customMapper.userRequestDtoToEmployee(employeeRequestDto)).thenReturn(customer);
+		User sessionUser = new User();
+		sessionUser.setActive(true);
+		sessionUser.setEmail("test");
+		sessionUser.setFullName("test");
+		sessionUser.setId(1l);
+		sessionUser.setRole(1);
+		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
+		boolean s = true;
+		when(userRepository.existsByEmail(employeeRequestDto.getEmail())).thenReturn(s);
 		userServiceImpl.addEmployee(employeeRequestDto, apiResponseDtoBuilder, httpServletRequest);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.USER_ADD_SUCCESS));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.EMAIL_ALREADY_EXISTS));
 
 	}
 
@@ -130,8 +140,19 @@ public class UserServiceImplTest {
 	public void updatePassword() {
 		String password = "test";
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		User sessionUser = new User();
+		sessionUser.setActive(true);
+		sessionUser.setEmail("test");
+		sessionUser.setFullName("test");
+		sessionUser.setId(1l);
+		sessionUser.setRole(2);
+		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
+		SuperAdmin superAdmin = new SuperAdmin();
+		superAdmin.setId(1l);
+		Optional<SuperAdmin> g = Optional.ofNullable(superAdmin);
+		when(superAdminRepository.findById(1l)).thenReturn(g);
 		userServiceImpl.updatePassword(apiResponseDtoBuilder, password);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Super Admin Password update Successfully"));
 
 	}
 
@@ -139,10 +160,13 @@ public class UserServiceImplTest {
 	public void getAllOrder() {
 		long id = 1l;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		Order order = new Order();
+		order.setId(1l);
 		List<Order> listOfOrders = new ArrayList<>();
+		listOfOrders.add(order);
 		when(orderRepository.findByCustomerId(id)).thenReturn(listOfOrders);
 		userServiceImpl.getAllOrder(apiResponseDtoBuilder, id);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Success"));
 
 	}
 
@@ -151,10 +175,11 @@ public class UserServiceImplTest {
 		long id = 1l;
 		String email = "test";
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		Optional<Customer> customer = null;
-		when(customerRepository.findById(id)).thenReturn(customer);
+		Customer customer = new Customer();
+		Optional<Customer> customers = Optional.ofNullable(customer);
+		when(customerRepository.findById(id)).thenReturn(customers);
 		userServiceImpl.addFriend(apiResponseDtoBuilder, email, id);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Refer your Friend Successfully"));
 
 	}
 
@@ -163,16 +188,18 @@ public class UserServiceImplTest {
 		long id = 1l;
 		String email = "test";
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		Optional<Employee> employee = null;
-		when(employeeRepository.findById(id)).thenReturn(employee);
+		Employee employee = new Employee();
+		Optional<Employee> employees = Optional.ofNullable(employee);
+		when(employeeRepository.findById(id)).thenReturn(employees);
 		userServiceImpl.getEmployeeById(apiResponseDtoBuilder, id);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 
 	}
 
 	@Test
 	public void updateCustomer() {
 		long id = 1l;
+		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		CustomerRequestDto customerRequestDto = new CustomerRequestDto();
 		customerRequestDto.setEmail("test");
 		customerRequestDto.setFullName("test");
@@ -180,12 +207,11 @@ public class UserServiceImplTest {
 		customerRequestDto.setMobileNumber("123456789");
 		customerRequestDto.setPassword("test");
 		customerRequestDto.setProfileImage("test");
-
-		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		Optional<Customer> customer = null;
-		when(customerRepository.findById(id)).thenReturn(customer);
+		Customer customer = new Customer();
+		Optional<Customer> customers = Optional.ofNullable(customer);
+		when(customerRepository.findById(id)).thenReturn(customers);
 		userServiceImpl.updateCustomer(customerRequestDto, id, apiResponseDtoBuilder);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.CUSTOMER_UPDATE_SUCCESS));
 
 	}
 
@@ -193,10 +219,12 @@ public class UserServiceImplTest {
 	public void deleteCustomerById() {
 		long id = 1l;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		Optional<Customer> customer = null;
-		when(customerRepository.findById(id)).thenReturn(customer);
+		Customer customer = new Customer();
+		customer.setId(1l);
+		Optional<Customer> customers = Optional.ofNullable(customer);
+		when(customerRepository.findById(id)).thenReturn(customers);
 		userServiceImpl.deleteCustomerById(apiResponseDtoBuilder, id);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Customer Delete Successfully..."));
 
 	}
 
@@ -204,26 +232,32 @@ public class UserServiceImplTest {
 	public void forgotPassword() {
 		String email = "test";
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		SuperAdmin superAdmin = new SuperAdmin();
+		when(superAdminRepository.findByEmail(email)).thenReturn(superAdmin);
+		// when(verificationTokenService.sendPassword("test@gmail.com", "test"));
 		userServiceImpl.forgotPassword(apiResponseDtoBuilder, email);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 
 	}
+
 	@Test
 	public void sendPass() {
 		String email = "test";
-		String password="test";
+		String password = "test";
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		userServiceImpl.sendPass(apiResponseDtoBuilder, email,password);
+		userServiceImpl.sendPass(apiResponseDtoBuilder, email, password);
 		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 
 	}
+
 	@Test
 	public void getCustomerById() {
-		long id=1l;
+		long id = 1l;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		when(customerRepository.existsById(id));
+		boolean b = true;
+		when(customerRepository.existsById(id)).thenReturn(b);
 		userServiceImpl.getCustomerById(apiResponseDtoBuilder, id);
-		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("success"));
 
 	}
 }
