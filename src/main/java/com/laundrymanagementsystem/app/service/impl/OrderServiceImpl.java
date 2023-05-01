@@ -147,7 +147,7 @@ public class OrderServiceImpl implements IOrderService {
 				}
 				if (order.getLaundryMachineId() != null) {
 					Optional<Inventory> inventory = inventoryRepository.findById(order.getLaundryMachineId());
-					orderResponseDto.setMachineName(inventory.get().getItemName());
+					orderResponseDto.setMachineName(inventory.isPresent() ? inventory.get().getItemName() : "");
 				}
 				orderResponseDto.setDetails(orderDetails);
 				orders.add(orderResponseDto);

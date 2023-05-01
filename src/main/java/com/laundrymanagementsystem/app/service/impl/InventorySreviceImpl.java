@@ -123,6 +123,6 @@ public class InventorySreviceImpl implements IInventoryService {
 	@Override
 	public void getAvailableItem(ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		apiResponseDtoBuilder.withMessage("Machine list").withStatus(HttpStatus.OK)
-				.withData(inventoryRepository.findByUsedItemGreaterThan(0L));
+				.withData(inventoryRepository.findByUsedItemGreaterThanAndItemNameContainingIgnoreCase(0L, "machine"));
 	}
 }

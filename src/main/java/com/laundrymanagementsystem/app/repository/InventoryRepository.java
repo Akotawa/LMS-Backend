@@ -12,4 +12,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
 	List<Inventory> findByUsedItemGreaterThan(long l);
 
+	List<Inventory> findByUsedItemGreaterThanAndItemNameContainingIgnoreCase(long l, String string);
+
 }
