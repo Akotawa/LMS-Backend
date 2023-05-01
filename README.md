@@ -31,6 +31,6 @@ This is a maven based project architecture so you can find all the dependancies 
 All the configurations like database connection, email sender etc. will be avilable in application.properties file.
 You can find folder 'src' inside poject, Inside the src there will be two folders `main` and `test`
 
-All the test classes can be find in `test` foder. and all the main files like controllers, repositories, services etc can be found in main folder  
+All the test classes can be find in `test` folder. and all the main files like controllers, repositories, services etc can be found in main folder  
 
 
