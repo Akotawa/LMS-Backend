@@ -5,6 +5,7 @@ public class FeedbackRequestDto {
 	private Long customerId;
 	private Long orderId;
 	private String feedback;
+
 	public Long getLaundryId() {
 		return laundryId;
 	}

@@ -23,4 +23,6 @@ public interface IInventoryService {
 
 	void getInventoryById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
 
+	void getAvailableItem(ApiResponseDtoBuilder apiResponseDtoBuilder);
+
 }

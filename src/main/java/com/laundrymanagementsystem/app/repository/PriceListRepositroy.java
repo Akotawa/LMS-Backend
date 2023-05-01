@@ -15,4 +15,6 @@ public interface PriceListRepositroy extends JpaRepository<PriceList, Long> {
 	boolean existsByLaundryId(long laundryId);
 
 	PriceList findByLaundryId(long laundryId);
+
+	void deleteByLaundryId(long id);
 }

@@ -73,4 +73,6 @@ public interface IUserService {
 
 	void getCustomerById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id);
 
+	boolean existsByActive(boolean b);
+
 }

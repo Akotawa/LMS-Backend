@@ -40,17 +40,12 @@ public class EmailServiceImpl implements IEmailService {
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
 			helper = new MimeMessageHelper(mimeMessage, true);
 			helper.setFrom(environment.getProperty(Constants.SUPPORT_EMAIL));// add mail address
+			System.out.println(environment.getProperty(Constants.SUPPORT_EMAIL));
 			helper.setTo(toEmail);
 			helper.setSubject(subject);
 			mimeMessage.setFrom(new InternetAddress(environment.getProperty(Constants.SUPPORT_EMAIL), label));
 			mimeMessage.setContent(body, "text/html");
 
-			if (ccEmailList != null && !ccEmailList.isEmpty()) {
-				for (String ccEmail : ccEmailList) {
-					mimeMessage.addRecipients(Message.RecipientType.CC, ccEmail);
-				}
-			}
-			mimeMessage.setFrom(new InternetAddress(environment.getProperty(Constants.SUPPORT_EMAIL), label));
 
 			if (attachmentUrlList != null && !attachmentUrlList.isEmpty()) {
 				for (String attachmentUrl : attachmentUrlList) {

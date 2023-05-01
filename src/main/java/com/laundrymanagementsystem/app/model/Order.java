@@ -28,7 +28,6 @@ public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	private String email;
 	@Column(nullable = true)
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
@@ -43,11 +42,7 @@ public class Order {
 	@JsonDeserialize(using = CustomDateAndTimeDeserialize.class)
 	private Date updatedAt;
 	private Long customerId;
-	private String customerName;
-	private String contactNumber;
-	private Long serviceId;
 	private Long laundryMachineId;
-	private Long quantity;
 	@CreatedDate
 	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@JsonDeserialize(using = CustomDateAndTimeDeserialize.class)
@@ -60,6 +55,15 @@ public class Order {
 	private Integer orderStatus;
 	private Long laundryId;
 	private Boolean paymentStatus;
+	private String orderId;
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
 
 	public Long getId() {
 		return id;
@@ -67,14 +71,6 @@ public class Order {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public Date getCreatedAt() {
@@ -101,44 +97,12 @@ public class Order {
 		this.customerId = customerId;
 	}
 
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
-
-	public String getContactNumber() {
-		return contactNumber;
-	}
-
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-
-	public Long getServiceId() {
-		return serviceId;
-	}
-
-	public void setServiceId(Long serviceId) {
-		this.serviceId = serviceId;
-	}
-
 	public Long getLaundryMachineId() {
 		return laundryMachineId;
 	}
 
 	public void setLaundryMachineId(Long laundryMachineId) {
 		this.laundryMachineId = laundryMachineId;
-	}
-
-	public Long getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(Long quantity) {
-		this.quantity = quantity;
 	}
 
 	public Date getReceivedDate() {

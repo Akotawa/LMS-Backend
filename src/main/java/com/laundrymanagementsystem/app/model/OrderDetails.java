@@ -21,30 +21,13 @@ import com.laundrymanagementsystem.app.config.CustomJsonDateSerializer;
 import com.laundrymanagementsystem.app.constants.Constants;
 
 @Entity
-@Table(name = Constants.INVENTORY_TABLE_NAME)
+@Table(name = Constants.ORDER_DETAILS_TABLE_NAME)
 @JsonIgnoreProperties
-public class Inventory {
+public class OrderDetails {
 
-	public static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
-	private String itemName;
-	private Long laundryId;
-	private String itemDescription;
-
-	private Long quantity;
-	private Long usedItem;
-
-	public Long getUsedItem() {
-		return usedItem;
-	}
-
-	public void setUsedItem(Long usedItem) {
-		this.usedItem = usedItem;
-	}
-
 	@Column(nullable = true)
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
@@ -58,6 +41,19 @@ public class Inventory {
 	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@JsonDeserialize(using = CustomDateAndTimeDeserialize.class)
 	private Date updatedAt;
+	private Long orderId;
+
+	private Long serviceId;
+	private Long quantity;
+	private Double payment;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -75,40 +71,20 @@ public class Inventory {
 		this.updatedAt = updatedAt;
 	}
 
-	public Long getLaundryId() {
-		return laundryId;
+	public Long getOrderId() {
+		return orderId;
 	}
 
-	public void setLaundryId(Long laundryId) {
-		this.laundryId = laundryId;
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public Long getServiceId() {
+		return serviceId;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getItemName() {
-		return itemName;
-	}
-
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
-	public String getItemDescription() {
-		return itemDescription;
-	}
-
-	public void setItemDescription(String itemDescription) {
-		this.itemDescription = itemDescription;
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
 	}
 
 	public Long getQuantity() {
@@ -117,6 +93,14 @@ public class Inventory {
 
 	public void setQuantity(Long quantity) {
 		this.quantity = quantity;
+	}
+
+	public Double getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Double payment) {
+		this.payment = payment;
 	}
 
 }

@@ -15,6 +15,7 @@ public class Constants {
 	public static final String RATING_TABLE_NAME = "rating_details";
 	public static final String FEEDBACK_TABLE_NAME = "feedback_details";
 	public static final String ORDER_TABLE_NAME = "order_details";
+	public static final String ORDER_DETAILS_TABLE_NAME = "order_service_details";
 	public static final String SERVICES_TABLE_NAME = "services_details";
 	public static final String REPORT_TABLE_NAME = "report_details";
 	public static final String PRICELIST_TABLE_NAME = "price_details";
@@ -67,7 +68,7 @@ public class Constants {
 	// Feedback
 	public static final String FEEDBACK_SENT_SUCCESSFULLY = "Feedback response sent successfully";
 	public static final String FEEDBACK_NOT_FOUND = "Feedback not found";
-	public static final String FEEDBACK_ADD_SUCCESS="Feedback add successfully";
+	public static final String FEEDBACK_ADD_SUCCESS = "Feedback add successfully";
 
 	// Inventory
 	public static final String NO_ITEM_EXISTS = "No Item Exists";
@@ -87,5 +88,7 @@ public class Constants {
 	public static final String SUCCESSFULLY = "Success";
 
 	public static final String LAUNDRY_MACHINE_ASSIGNMENT_ADD_SUCCESS = "Laundry Machine Assignment Add Successfully";
+
+	public static final String NOT_ACTIVE = "Your account has been suspended";
 
 }

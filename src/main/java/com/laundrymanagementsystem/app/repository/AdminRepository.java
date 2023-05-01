@@ -12,10 +12,12 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
 	Admin findByEmail(String username);
 
-
 	boolean existsByMobileNumber(String mobileNumber);
 
 	boolean existsByEmail(String email);
 
+	void deleteByLaundryid(long id);
+
+	Admin findByLaundryid(long id);
 
 }

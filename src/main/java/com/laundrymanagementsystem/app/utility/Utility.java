@@ -26,9 +26,8 @@ public class Utility {
 		String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String Small_chars = "abcdefghijklmnopqrstuvwxyz";
 		String numbers = "0123456789";
-		String symbols = "!@#$%^&*_=+-/.?<>)";
 
-		String values = Capital_chars + Small_chars + numbers + symbols;
+		String values = Capital_chars + Small_chars + numbers;
 
 		Random rndm_method = new Random();
 

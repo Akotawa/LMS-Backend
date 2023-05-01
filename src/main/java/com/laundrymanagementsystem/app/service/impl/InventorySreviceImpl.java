@@ -30,6 +30,7 @@ public class InventorySreviceImpl implements IInventoryService {
 	InventoryRepository inventoryRepository;
 	@Autowired
 	CustomMapper customMapper;
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -37,8 +38,10 @@ public class InventorySreviceImpl implements IInventoryService {
 	public void addItem(@Valid @RequestBody(required = true) InventoryRequestDto inventoryRequestDto,
 			ApiResponseDtoBuilder apiResponseDtoBuilder, HttpServletRequest request) {
 		User sessionUser = Utility.getSessionUser(userRepository);
-		if ((sessionUser.getRole() == 2 && sessionUser != null)||(sessionUser.getRole() == 1 && sessionUser != null)) {
+		if ((sessionUser.getRole() == 2 && sessionUser != null)
+				|| (sessionUser.getRole() == 1 && sessionUser != null)) {
 			Inventory inventory = customMapper.inventoryRequestDtoToInventory(inventoryRequestDto);
+			inventory.setUsedItem(inventory.getQuantity());
 			inventory.setCreatedAt(new Date());
 			saveItem(inventory);
 			apiResponseDtoBuilder.withMessage(Constants.ITEM_ADD_SUCCESS).withStatus(HttpStatus.OK).withData(inventory);
@@ -54,7 +57,8 @@ public class InventorySreviceImpl implements IInventoryService {
 	@Override
 	public void getAllItem(ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		User sessionUser = Utility.getSessionUser(userRepository);
-		if ((sessionUser.getRole() == 2 && sessionUser != null)||(sessionUser.getRole() == 1 && sessionUser != null)) {
+		if ((sessionUser.getRole() == 2 && sessionUser != null)
+				|| (sessionUser.getRole() == 1 && sessionUser != null)) {
 			List<Inventory> itemList = inventoryRepository.findAll();
 			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(itemList);
 		} else {
@@ -65,7 +69,8 @@ public class InventorySreviceImpl implements IInventoryService {
 	@Override
 	public void deleteItemById(long id, ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		User sessionUser = Utility.getSessionUser(userRepository);
-		if ((sessionUser.getRole() == 2 && sessionUser != null)||(sessionUser.getRole() == 1 && sessionUser != null)) {
+		if ((sessionUser.getRole() == 2 && sessionUser != null)
+				|| (sessionUser.getRole() == 1 && sessionUser != null)) {
 			Optional<Inventory> item = inventoryRepository.findById(id);
 			if (item.isPresent()) {
 				inventoryRepository.deleteById(id);
@@ -82,7 +87,8 @@ public class InventorySreviceImpl implements IInventoryService {
 	@Override
 	public void updateItem(@Valid Inventory inventory, ApiResponseDtoBuilder apiResponseDtoBuilder) {
 		User sessionUser = Utility.getSessionUser(userRepository);
-		if ((sessionUser.getRole() == 2 && sessionUser != null)||(sessionUser.getRole() == 1 && sessionUser != null)) {
+		if ((sessionUser.getRole() == 2 && sessionUser != null)
+				|| (sessionUser.getRole() == 1 && sessionUser != null)) {
 			Optional<Inventory> inventoryChaeck = inventoryRepository.findById(inventory.getId());
 			if (inventoryChaeck.isPresent()) {
 				inventory.setUpdatedAt(new Date());
@@ -101,7 +107,8 @@ public class InventorySreviceImpl implements IInventoryService {
 	@Override
 	public void getInventoryById(ApiResponseDtoBuilder apiResponseDtoBuilder, long id) {
 		User sessionUser = Utility.getSessionUser(userRepository);
-		if ((sessionUser.getRole() == 2 && sessionUser != null)||(sessionUser.getRole() == 1 && sessionUser != null)) {
+		if ((sessionUser.getRole() == 2 && sessionUser != null)
+				|| (sessionUser.getRole() == 1 && sessionUser != null)) {
 			Optional<Inventory> inventory = inventoryRepository.findById(id);
 			if (inventory.isPresent()) {
 				apiResponseDtoBuilder.withMessage("Inventory Details ..").withStatus(HttpStatus.OK).withData(inventory);
@@ -111,5 +118,11 @@ public class InventorySreviceImpl implements IInventoryService {
 		} else {
 			apiResponseDtoBuilder.withMessage(Constants.UNAUTHORIZED).withStatus(HttpStatus.UNAUTHORIZED);
 		}
+	}
+
+	@Override
+	public void getAvailableItem(ApiResponseDtoBuilder apiResponseDtoBuilder) {
+		apiResponseDtoBuilder.withMessage("Machine list").withStatus(HttpStatus.OK)
+				.withData(inventoryRepository.findByUsedItemGreaterThan(0L));
 	}
 }

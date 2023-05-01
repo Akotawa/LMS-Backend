@@ -24,9 +24,10 @@ import org.springframework.web.client.RestTemplate;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final String[] antMatchers = new String[] { "/api/auth/login", "/api/auth/admin/login", "/api/user/add/**",
-			"/api/manager/add/**", "/api/file/**", "/v2/api-docs", "/swagger-resources/configuration/ui",
-			"/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui.html", "/webjars/**",
-			"/api/graph", "/api/registrationConfirm", "/api/superadmin/add/**", "/api/customer/add/**","/api/**" };
+			"/api/manager/add/**", "/api/customer/forgotPassword/**", "/api/file/**", "/v2/api-docs",
+			"/swagger-resources/configuration/ui", "/swagger-resources", "/swagger-resources/configuration/security",
+			"/swagger-ui.html", "/webjars/**", "/api/graph", "/api/registrationConfirm", "/api/superadmin/add/**",
+			"/api/customer/add/**" };
 	@Resource(name = "userService")
 	private UserDetailsService userDetailsService;
 

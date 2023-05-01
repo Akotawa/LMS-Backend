@@ -1,21 +1,20 @@
 package com.laundrymanagementsystem.app.dto;
 
 import com.laundrymanagementsystem.app.model.Feedback;
-import com.laundrymanagementsystem.app.model.Order;
 import com.laundrymanagementsystem.app.model.Rating;
 
 public class OrderTrackResponse {
 
-	private Order order;
+	private OrderResponseDto orderResponseDto;
 	private Feedback feedback;
 	private Rating rating;
 
-	public Order getOrder() {
-		return order;
+	public OrderResponseDto getOrderResponseDto() {
+		return orderResponseDto;
 	}
 
-	public void setOrder(Order order) {
-		this.order = order;
+	public void setOrderResponseDto(OrderResponseDto orderResponseDto) {
+		this.orderResponseDto = orderResponseDto;
 	}
 
 	public Feedback getFeedback() {

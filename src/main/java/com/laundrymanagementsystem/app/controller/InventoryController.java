@@ -49,6 +49,13 @@ public class InventoryController {
 		return apiResponseDtoBuilder.build();
 	}
 
+	@GetMapping(value = "/Inventory/getAvailable", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ApiResponseDto getAvailableItem() {
+		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		iInventoryService.getAvailableItem(apiResponseDtoBuilder);
+		return apiResponseDtoBuilder.build();
+	}
+
 	@GetMapping(value = "/Inventory/get/{id}")
 	public ApiResponseDto getInventoryById(@PathVariable(required = true) long id) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();

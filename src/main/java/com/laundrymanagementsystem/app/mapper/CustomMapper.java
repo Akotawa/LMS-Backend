@@ -9,7 +9,7 @@ import com.laundrymanagementsystem.app.dto.EmployeeRequestDto;
 import com.laundrymanagementsystem.app.dto.FeedbackRequestDto;
 import com.laundrymanagementsystem.app.dto.InventoryRequestDto;
 import com.laundrymanagementsystem.app.dto.LaundryRequestDto;
-import com.laundrymanagementsystem.app.dto.OrderRequestDto;
+import com.laundrymanagementsystem.app.dto.OrderResponseDto;
 import com.laundrymanagementsystem.app.dto.PriceListRequestDto;
 import com.laundrymanagementsystem.app.dto.PromoCodeRequestDto;
 import com.laundrymanagementsystem.app.dto.RatingRequestDto;
@@ -55,8 +55,6 @@ public interface CustomMapper {
 
 	Laundry laundryRequestDtoTolandry(@Valid LaundryRequestDto laundryRequestDto);
 
-	Order orderRequestDtoToOrder(@Valid OrderRequestDto orderRequestDto);
-
 	Inventory inventoryRequestDtoToInventory(@Valid InventoryRequestDto inventoryRequestDto);
 
 	Services serviceRequestDtoToServices(@Valid ServiceRequestDto serviceRequestDto);
@@ -68,5 +66,7 @@ public interface CustomMapper {
 	Customer CustomerRequestDtoToCustomer(CustomerRequestDto customerRequestDto);
 
 	PriceList PriceListRequestDtoToPriceList(PriceListRequestDto priceListRequestDto);
+
+	OrderResponseDto orderToOrderResponseDto(Order order);
 
 }

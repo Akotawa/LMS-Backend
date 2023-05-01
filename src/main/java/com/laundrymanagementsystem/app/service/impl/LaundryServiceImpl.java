@@ -21,6 +21,9 @@ import com.laundrymanagementsystem.app.model.Laundry;
 import com.laundrymanagementsystem.app.model.User;
 import com.laundrymanagementsystem.app.repository.AdminRepository;
 import com.laundrymanagementsystem.app.repository.LaundryRepository;
+import com.laundrymanagementsystem.app.repository.OrderRepository;
+import com.laundrymanagementsystem.app.repository.PriceListRepositroy;
+import com.laundrymanagementsystem.app.repository.ServiceRepository;
 import com.laundrymanagementsystem.app.repository.UserRepository;
 import com.laundrymanagementsystem.app.service.IVerificationTokenService;
 import com.laundrymanagementsystem.app.service.lLaundryService;
@@ -40,6 +43,15 @@ public class LaundryServiceImpl implements lLaundryService {
 	private IVerificationTokenService verificationTokenService;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	@Autowired
+	private ServiceRepository serviceRepository;
+
+	@Autowired
+	private PriceListRepositroy priceListRepository;
+
+	@Autowired
+	private OrderRepository orderRepository;
 
 	@Override
 	public void addLaundry(@Valid LaundryRequestDto laundryRequestDto, ApiResponseDtoBuilder apiResponseDtoBuilder,
@@ -67,7 +79,7 @@ public class LaundryServiceImpl implements lLaundryService {
 
 		laundry.setCreatedAt(new Date());
 		laundry.setLaundryStatus(true);
-		
+
 		Admin admin = new Admin();
 		String password = Utility.generateRandomPassword(8);
 		System.out.println(password);
@@ -109,18 +121,17 @@ public class LaundryServiceImpl implements lLaundryService {
 		}
 		laundry.setUpdatedAt(new Date());
 		laundryRepository.save(laundry);
-		apiResponseDtoBuilder.withMessage("Laundry  Update Successfully.").withStatus(HttpStatus.OK)
-				.withData(laundry);
+		apiResponseDtoBuilder.withMessage("Laundry  Update Successfully.").withStatus(HttpStatus.OK).withData(laundry);
 
 	}
 
 	@Override
 	public void getAllLaundryDetails(ApiResponseDtoBuilder apiResponseDtoBuilder) {
-		User currentUser = Utility.getSessionUser(userRepository);
-		if (currentUser == null || currentUser.getRole() != 0) {
-			apiResponseDtoBuilder.withMessage(Constants.UNAUTHORIZED).withStatus(HttpStatus.UNAUTHORIZED);
-			return;
-		}
+//		User currentUser = Utility.getSessionUser(userRepository);
+//		if (currentUser == null || currentUser.getRole() != 0) {
+//			apiResponseDtoBuilder.withMessage(Constants.UNAUTHORIZED).withStatus(HttpStatus.UNAUTHORIZED);
+//			return;
+//		}
 		List<Laundry> cabList = laundryRepository.findAll();
 		apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(cabList);
 
@@ -135,14 +146,10 @@ public class LaundryServiceImpl implements lLaundryService {
 			return;
 		}
 		if (user.isPresent()) {
-
 			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(user);
-
 		} else {
 			apiResponseDtoBuilder.withMessage("data not fond.").withStatus(HttpStatus.OK);
-
 		}
-
 	}
 
 	@Override
@@ -155,7 +162,12 @@ public class LaundryServiceImpl implements lLaundryService {
 		}
 		if (user.isPresent()) {
 			laundryRepository.deleteById(id);
-
+			Admin admin = adminRepository.findByLaundryid(id);
+			admin.setActive(false);
+			adminRepository.save(admin);
+			serviceRepository.deleteBylaundryId(id);
+			priceListRepository.deleteByLaundryId(id);
+			orderRepository.deleteByLaundryId(id);
 			apiResponseDtoBuilder.withMessage("Laundry Deleted Successfully").withStatus(HttpStatus.OK);
 		} else {
 			apiResponseDtoBuilder.withMessage("fail").withStatus(HttpStatus.NOT_FOUND);
@@ -187,9 +199,9 @@ public class LaundryServiceImpl implements lLaundryService {
 
 	@Override
 	public void ChangeOOStatus(long id, int status, ApiResponseDtoBuilder apiResponseDtoBuilder) {
-		Optional<Laundry> cab = laundryRepository.findById(id);
-		if (cab.isPresent()) {
-			save(cab.get());
+		Optional<Laundry> laundry = laundryRepository.findById(id);
+		if (laundry.isPresent()) {
+			save(laundry.get());
 			apiResponseDtoBuilder
 					.withMessage(status == 1 ? Constants.LAUNDRY_APPROVE_SUCCESS : Constants.LAUNDRY_REJECT_SUCCESS)
 					.withStatus(HttpStatus.OK);
@@ -201,10 +213,10 @@ public class LaundryServiceImpl implements lLaundryService {
 
 	@Override
 	public void orderConfirmation(long id, int status, ApiResponseDtoBuilder apiResponseDtoBuilder) {
-		Optional<Laundry> cab = laundryRepository.findById(id);
+		Optional<Laundry> laundry = laundryRepository.findById(id);
 
-		if (cab.isPresent()) {
-			save(cab.get());
+		if (laundry.isPresent()) {
+			save(laundry.get());
 			apiResponseDtoBuilder
 					.withMessage(status == 1 ? Constants.LAUNDRY_APPROVE_SUCCESS : Constants.LAUNDRY_REJECT_SUCCESS)
 					.withStatus(HttpStatus.OK);

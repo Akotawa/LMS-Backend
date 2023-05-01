@@ -1,6 +1,5 @@
 package com.laundrymanagementsystem.app.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,9 @@ public class OrderController {
 	IOrderService orderService;
 
 	@PostMapping(value = "order/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ApiResponseDto addOrder(@Valid @RequestBody OrderRequestDto orderRequestDto,
-			final HttpServletRequest request) {
+	public ApiResponseDto addOrder(@Valid @RequestBody OrderRequestDto orderRequestDto) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		orderService.addOrder(orderRequestDto, apiResponseDtoBuilder, request);
+		orderService.addOrder(orderRequestDto, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
 
@@ -51,18 +49,18 @@ public class OrderController {
 		orderService.getAllOrder(apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
-	
+
 	@GetMapping(value = "get/order/{orderID}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto getOrderById(@PathVariable(required = true) Long orderID) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		orderService.getOrderById(apiResponseDtoBuilder,orderID);
+		orderService.getOrderById(apiResponseDtoBuilder, orderID);
 		return apiResponseDtoBuilder.build();
 	}
 
 	@GetMapping(value = "get/orders/{laundryID}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ApiResponseDto getOrdersByLaundryID(@PathVariable(required = true) Long laundryID) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		orderService.getOrdersByLaundryID(apiResponseDtoBuilder,laundryID);
+		orderService.getOrdersByLaundryID(apiResponseDtoBuilder, laundryID);
 		return apiResponseDtoBuilder.build();
 	}
 
@@ -78,6 +76,13 @@ public class OrderController {
 			@PathVariable(required = true) int status) {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		orderService.updateOrderStatus(id, status, apiResponseDtoBuilder);
+		return apiResponseDtoBuilder.build();
+	}
+
+	@PostMapping(value = "/cancel/order/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ApiResponseDto cancelOrder(@PathVariable(required = true) Long id) {
+		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
+		orderService.cancelOrder(id, apiResponseDtoBuilder);
 		return apiResponseDtoBuilder.build();
 	}
 

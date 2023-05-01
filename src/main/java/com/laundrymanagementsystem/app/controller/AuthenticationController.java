@@ -47,7 +47,6 @@ public class AuthenticationController {
 	@Autowired
 	private IUserService userService;
 
-
 	@PostMapping("/login")
 	public ApiResponseDto userlogin(@RequestBody LoginUser loginUser) throws AuthenticationException {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
@@ -56,13 +55,17 @@ public class AuthenticationController {
 			apiResponseDtoBuilder.withStatus(HttpStatus.UNAUTHORIZED).withMessage(Constants.NO_Mobile_EXISTS);
 			return apiResponseDtoBuilder.build();
 		}
+		if (!checkUser.getActive()) {
+			apiResponseDtoBuilder.withStatus(HttpStatus.UNAUTHORIZED).withMessage(Constants.NOT_ACTIVE);
+			return apiResponseDtoBuilder.build();
+		}
 		if (checkUser.getRole() == 3) {
 			Customer customer = userService.findCustomerById(checkUser.getId());
 			userService.saveCustomer(customer);
 		} else if (checkUser.getRole() == 2) {
 			Employee employee = userService.findEmployeeById(checkUser.getId());
 			userService.saveEmployee(employee);
-		}else if (checkUser.getRole() == 1) {
+		} else if (checkUser.getRole() == 1) {
 			Admin admin = userService.findAdminById(checkUser.getId());
 			userService.saveAdmin(admin);
 		}

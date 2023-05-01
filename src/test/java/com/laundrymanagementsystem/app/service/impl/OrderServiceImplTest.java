@@ -70,12 +70,7 @@ public class OrderServiceImplTest {
 		HttpServletRequest httpServletRequest = null;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		OrderRequestDto orderRequestDto = new OrderRequestDto();
-		orderRequestDto.setEmail("test@gamil.com");
 		orderRequestDto.setLaundryId(1L);
-		orderRequestDto.setContactNumber("123");
-		orderRequestDto.setCustomerName("test");
-		orderRequestDto.setPaymentStatus(true);
-		orderRequestDto.setQuantity(1l);
 
 		Inventory inventory = new Inventory();
 		User sessionUser = new User();
@@ -85,9 +80,8 @@ public class OrderServiceImplTest {
 		sessionUser.setId(1l);
 		sessionUser.setRole(2);
 		Order order = new Order();
-		when(customMapper.orderRequestDtoToOrder(orderRequestDto)).thenReturn(order);
 		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
-		orderServiceImpl.addOrder(orderRequestDto, apiResponseDtoBuilder, httpServletRequest);
+		orderServiceImpl.addOrder(orderRequestDto, apiResponseDtoBuilder);
 		assertTrue(apiResponseDtoBuilder.getMessage().equals("Order Add Sucessfully"));
 
 	}
@@ -97,12 +91,8 @@ public class OrderServiceImplTest {
 		HttpServletRequest httpServletRequest = null;
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		Order orderRequestDto = new Order();
-		orderRequestDto.setEmail("test@gamil.com");
 		orderRequestDto.setLaundryId(1L);
-		orderRequestDto.setContactNumber("123");
-		orderRequestDto.setCustomerName("test");
 		orderRequestDto.setPaymentStatus(true);
-		orderRequestDto.setQuantity(1l);
 
 		Inventory inventory = new Inventory();
 		User sessionUser = new User();

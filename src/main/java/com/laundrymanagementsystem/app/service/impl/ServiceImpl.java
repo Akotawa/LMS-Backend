@@ -17,6 +17,7 @@ import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.dto.ServiceRequestDto;
 import com.laundrymanagementsystem.app.dto.ServiceResponseDto;
 import com.laundrymanagementsystem.app.mapper.CustomMapper;
+import com.laundrymanagementsystem.app.model.PriceList;
 import com.laundrymanagementsystem.app.model.Services;
 import com.laundrymanagementsystem.app.repository.LaundryRepository;
 import com.laundrymanagementsystem.app.repository.PriceListRepositroy;
@@ -63,7 +64,10 @@ public class ServiceImpl implements IService {
 		List<Services> listOfServices = serviceRepository.findAllByLaundryId(laundryId);
 
 		if (!listOfServices.isEmpty()) {
-
+			for (Services services : listOfServices) {
+				Optional<PriceList> price = priceListRepositroy.findById(services.getPrice());
+				services.setPrice((long) (price.isPresent() ? price.get().getPrice() : 0));
+			}
 			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK)
 					.withData(listOfServices);
 
@@ -114,7 +118,7 @@ public class ServiceImpl implements IService {
 						.setLaundryName(laundryRepository.findById(services.getLaundryId()).get().getCompanyName());
 			}
 			serviceResponseDto.setPriceId(services.getPrice());
-			if(priceListRepositroy.findById(services.getPrice()).isPresent()) {
+			if (priceListRepositroy.findById(services.getPrice()).isPresent()) {
 				serviceResponseDto.setPrice(priceListRepositroy.findById(services.getPrice()).get().getPrice());
 			}
 			serviceList.add(serviceResponseDto);

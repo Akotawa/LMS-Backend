@@ -13,9 +13,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	void save(@Valid OrderRequestDto orderRequestDto);
 
-	boolean existsByContactNumber(String contactNumber);
+//	boolean existsByContactNumber(String contactNumber);
 
-	boolean existsByEmail(String email);
+//	boolean existsByEmail(String email);
 	
 	List<Order> findByCustomerId(long id);
 
@@ -26,5 +26,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	long countByOrderStatusAndLaundryId(int i, Long laundryid);
 
 	List<Order> findByLaundryId(Long laundryID);
+
+	void deleteByLaundryId(long id);
 
 }

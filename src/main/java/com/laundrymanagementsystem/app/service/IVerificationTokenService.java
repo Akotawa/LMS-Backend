@@ -15,13 +15,13 @@ public interface IVerificationTokenService {
 
 	void sendVerificationToken(User user, String password);
 
-	void sendBookingToken(Order order);
+	void sendBookingToken(User sessionUser);
 
 	void sendWelcomeToken(String password, String email);
 
 	void sendPassword(String email, String password);
 
-	void sendBill(Order order);
+	void sendBill(User user, Order order);
 
 
 }

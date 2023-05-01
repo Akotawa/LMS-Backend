@@ -1,7 +1,6 @@
 package com.laundrymanagementsystem.app.service.impl;
 
 import java.util.Date;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.laundrymanagementsystem.app.dto.ServiceReviewRequestDto;
 import com.laundrymanagementsystem.app.mapper.CustomMapper;
-import com.laundrymanagementsystem.app.model.Order;
 import com.laundrymanagementsystem.app.model.ServiceReview;
 import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.repository.CustomerRepository;
@@ -32,7 +30,6 @@ public class ServiceReviewImpl implements IServiceReview {
 	@Override
 	public void addServiceReview(ApiResponseDtoBuilder apiResponseDtoBuilder,
 			ServiceReviewRequestDto serviceReviewRequestDto) {
-
 		if ((orderRepository.findById(serviceReviewRequestDto.getOrderId()).isPresent())
 				&& (customerRepository.findById(serviceReviewRequestDto.getCustomerId()).isPresent())) {
 			ServiceReview serviceReview = customMapper.serviceReviewRequestDtoToServiceReview(serviceReviewRequestDto);

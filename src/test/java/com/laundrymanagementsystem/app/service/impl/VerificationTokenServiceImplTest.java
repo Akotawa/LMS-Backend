@@ -85,11 +85,10 @@ public class VerificationTokenServiceImplTest {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
 		long id = 1l;
 		String password = "test";
-		Order order = new Order();
-		order.setCustomerName("test");
-		order.setEmail("test@gmail.com");
-		order.setId(1l);
-		verificationTokenServiceImpl.sendBookingToken(order);
+		User user = new User();
+		user.setFullName("test");
+		user.setEmail("test@gmail.com");
+		verificationTokenServiceImpl.sendBookingToken(user);
 
 	}
 }

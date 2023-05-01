@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ import com.laundrymanagementsystem.app.dto.AdminRequestDto;
 import com.laundrymanagementsystem.app.dto.ApiResponseDto.ApiResponseDtoBuilder;
 import com.laundrymanagementsystem.app.dto.EmployeeRequestDto;
 import com.laundrymanagementsystem.app.dto.EmployeeResponseDto;
+import com.laundrymanagementsystem.app.dto.OrderResponseDto;
 import com.laundrymanagementsystem.app.mapper.CustomMapper;
 import com.laundrymanagementsystem.app.model.Admin;
 import com.laundrymanagementsystem.app.model.Customer;
@@ -129,7 +131,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 		user.setRole(3);
 		saveCustomer(user);
 		apiResponseDtoBuilder.withMessage(Constants.USER_ADD_SUCCESS).withStatus(HttpStatus.OK).withData(user);
-		verificationTokenService.sendVerificationToken(user, user.getPassword());
+		verificationTokenService.sendVerificationToken(user, userRequestDto.getPassword());
 	}
 
 	@Override
@@ -289,9 +291,18 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 
 	@Override
 	public void getAllOrder(ApiResponseDtoBuilder apiResponseDtoBuilder, long id) {
-		List<Order> listOfOrders = orderRepository.findByCustomerId(id);
-		if (!listOfOrders.isEmpty()) {
-			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(listOfOrders);
+		List<Order> orderList = orderRepository.findByCustomerId(id);
+		if (!orderList.isEmpty()) {
+			List<OrderResponseDto> orders = orderList.stream().map(order -> {
+				Optional<User> user = userRepository.findById(order.getCustomerId());
+				OrderResponseDto orderResponseDto = customMapper.orderToOrderResponseDto(order);
+				orderResponseDto.setFullName(user.get().getFullName());
+				orderResponseDto.setId(order.getId());
+				orderResponseDto.setEmail(user.get().getEmail());
+				orderResponseDto.setMobileNumber(user.get().getMobileNumber());
+				return orderResponseDto;
+			}).collect(Collectors.toList());
+			apiResponseDtoBuilder.withMessage(Constants.SUCCESSFULLY).withStatus(HttpStatus.OK).withData(orders);
 		} else {
 			apiResponseDtoBuilder.withMessage(Constants.NO_ORDER_EXISTS).withStatus(HttpStatus.OK);
 		}
@@ -339,7 +350,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 		if (customer.isPresent()) {
 			newCustomer.setUpdatedAt(new Date());
 			newCustomer.setEmail(customerRequestDto.getEmail());
-			newCustomer.setPassword(bCryptPasswordEncoder.encode(customerRequestDto.getPassword()));
+//			newCustomer.setPassword(bCryptPasswordEncoder.encode(customerRequestDto.getPassword()));
 			newCustomer.setFullName(customerRequestDto.getFullName());
 			newCustomer.setHomeAddress(customerRequestDto.getHomeAddress());
 			newCustomer.setMobileNumber(customerRequestDto.getMobileNumber());
@@ -369,22 +380,28 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 		if (superAdminRepository.findByEmail(email) != null) {
 			String password = Utility.generateRandomPassword(8);
 			System.out.println(password);
-			superAdminRepository.findByEmail(email).setPassword(password);
+			SuperAdmin sa = superAdminRepository.findByEmail(email);
+			sa.setPassword(password);
+			superAdminRepository.save(sa);
 			sendPass(apiResponseDtoBuilder, email, password);
 		} else if (adminRepository.findByEmail(email) != null) {
 			String password = Utility.generateRandomPassword(8);
 			System.out.println(password);
-			adminRepository.findByEmail(email).setPassword(password);
+			Admin a = adminRepository.findByEmail(email);
+			a.setPassword(password);
+			adminRepository.save(a);
 			sendPass(apiResponseDtoBuilder, email, password);
 		} else if (employeeRepository.findByEmail(email) != null) {
 			String password = Utility.generateRandomPassword(8);
-			System.out.println(password);
-			employeeRepository.findByEmail(email).setPassword(password);
+			Employee e = employeeRepository.findByEmail(email);
+			e.setPassword(password);
+			employeeRepository.save(e);
 			sendPass(apiResponseDtoBuilder, email, password);
 		} else if (customerRepository.findByEmail(email) != null) {
 			String password = Utility.generateRandomPassword(8);
-			System.out.println(password);
-			customerRepository.findByEmail(email).setPassword(password);
+			Customer c = customerRepository.findByEmail(email);
+			c.setPassword(password);
+			customerRepository.save(c);
 			sendPass(apiResponseDtoBuilder, email, password);
 		} else {
 			apiResponseDtoBuilder.withMessage(Constants.USER_NOT_FOUND).withStatus(HttpStatus.NOT_FOUND);
@@ -407,6 +424,11 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 			apiResponseDtoBuilder.withMessage("customer not found").withStatus(HttpStatus.NOT_FOUND);
 		}
 
+	}
+
+	@Override
+	public boolean existsByActive(boolean b) {
+		return userRepository.existsByActive(b);
 	}
 
 }

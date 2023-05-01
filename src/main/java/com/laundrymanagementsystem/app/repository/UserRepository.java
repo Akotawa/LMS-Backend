@@ -33,4 +33,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	public User findByMobileNumberOrEmailAndPassword(String username, String username2, String password);
 
+	public boolean existsByActive(boolean b);
+
 }
