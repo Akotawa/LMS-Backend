@@ -3,7 +3,9 @@ package com.laundrymanagementsystem.app.service.impl;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,13 +116,8 @@ public class LaundryServiceImplTest {
 	@Test
 	public void getAllLaundryDetails() {
 		ApiResponseDtoBuilder apiResponseDtoBuilder = new ApiResponseDtoBuilder();
-		User sessionUser = new User();
-		sessionUser.setActive(true);
-		sessionUser.setEmail("test");
-		sessionUser.setFullName("test");
-		sessionUser.setId(1l);
-		sessionUser.setRole(0);
-		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
+		List<Laundry> cabList = new ArrayList<>();
+		when(laundryRepository.findAll()).thenReturn(cabList);
 		laundryServiceImpl.getAllLaundryDetails(apiResponseDtoBuilder);
 		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.SUCCESSFULLY));
 

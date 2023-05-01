@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ import com.laundrymanagementsystem.app.model.User;
 import com.laundrymanagementsystem.app.repository.OrderRepository;
 import com.laundrymanagementsystem.app.repository.ReportRepository;
 import com.laundrymanagementsystem.app.repository.UserRepository;
+import com.laundrymanagementsystem.app.service.IEmailService;
 import com.laundrymanagementsystem.app.utility.Utility;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +42,10 @@ public class ReportServiceImplTest {
 	UserRepository userRepository;
 	@Mock
 	CustomMapper customMapper;
+	@Mock
+	private Environment environment;
+	@Mock
+	IEmailService emailService;
 
 	@BeforeEach
 	public void init() {
@@ -67,6 +73,8 @@ public class ReportServiceImplTest {
 		report.setId(1l);
 		when(customMapper.reportRequestDtoToReport(reportRequestDto)).thenReturn(report);
 		when(Utility.getSessionUser(userRepository)).thenReturn(sessionUser);
+		String str = "test";
+		when(environment.getProperty(Constants.SUPPORT_EMAIL)).thenReturn(str);
 		reportServiceImple.addReport(apiResponseDtoBuilder, reportRequestDto);
 		assertTrue(apiResponseDtoBuilder.getMessage().equals(Constants.REPORT_ADD_SUCCESS));
 

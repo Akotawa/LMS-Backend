@@ -44,15 +44,16 @@ public class LaundryMachineAssignmentServiceImplTest {
 		laundryMachineAssignmentDto.setOrderID(1l);
 		Order order = new Order();
 		order.setId(1l);
-		Optional<Order> orderss = Optional.ofNullable(order);
-		when(orderRepository.findById(1l)).thenReturn(orderss);
+		Optional<Order> orders = Optional.ofNullable(order);
+		when(orderRepository.findById(1l)).thenReturn(orders);
 		Inventory inventory = new Inventory();
 		inventory.setId(1l);
+		inventory.setUsedItem(1l);
 		Optional<Inventory> test = Optional.ofNullable(inventory);
 		when(inventoryRepository.findById(laundryMachineAssignmentDto.getLaundryMachineAssignmentId()))
 				.thenReturn(test);
 		laundryMachineAssignmentServiceImpl.addLaundryMachineAssign(apiResponseDtoBuilder, laundryMachineAssignmentDto);
-		//assertTrue(apiResponseDtoBuilder.getMessage().equals("null"));
-
+		assertTrue(apiResponseDtoBuilder.getMessage().equals("Machine Assigned"));
+	
 	}
 }
